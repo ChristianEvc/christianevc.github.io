@@ -36,6 +36,7 @@
             <p>ATS Enabled: <span id="atsEnabled"></span></p>
             <p>Envelope Available: <span id="atsEnvelopeValue"></span></p>
             <button onclick="checkForEnvelope()">Check for Envelope</button>
+            <button onclick="trackATSConversion()">Trigger CST</button>
         </div>
 
 
@@ -74,6 +75,21 @@
 
     <script>
 
+        async function trackATSConversion() {
+            try {function dropTag(result) {
+                envelope = JSON.parse(result).envelope;
+            }
+            ats.retrieveEnvelope(dropTag)}
+            catch (error) {
+                envelope = "noEnvelope";
+            }
+            finally {
+                envelopeImage = document.createElement('img');
+                envelopeImage.src = "https://di.rlcdn.com/711162.gif?pdata=envelope%3D" + envelope;
+                document.body.appendChild(envelopeImage);
+            }
+        }
+        
         async function checkForEnvelope() {
 
             const envDisplay = document.getElementById("atsEnvelopeValue");
