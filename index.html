@@ -70,20 +70,27 @@
 
     <script>
 
-        async function trackATSConversion() {
-            try {function dropTag(result) {
-                envelope = JSON.parse(result).envelope;
-            }
-            ats.retrieveEnvelope(dropTag)}
-            catch (error) {
-                envelope = "noEnvelope";
-            }
-            finally {
-                envelopeImage = document.createElement('img');
-                envelopeImage.src = "https://di.rlcdn.com/711162.gif?pdata=envelope%3D" + envelope;
-                document.body.appendChild(envelopeImage);
-            }
+        async function trackATSConversion(pdata_KV_pairs) {
+
+            var env;
+            var envString;
+            var envImg;
+            var pdata_KV_pairs;
+
+        try {
+            // Retrieve the envelope from ATS
+            env = await ats.retrieveEnvelope();
+            envString = JSON.parse(env).envelope;
+        } catch (error) {
+            envString = "noEnvelope";
+        } finally {
+            // Create pixel for CST, concatenate the envelope to the pdata field
+            envImg = document.createElement("img");
+            envImg.src = "https://di.rlcdn.com/711151.gif?" +
+                "pdata=envelope%3D" + envString + pdata_kv_pairs;
+            document.body.appendChild(envImg);
         }
+    }
         
         async function checkForEnvelope() {
 
