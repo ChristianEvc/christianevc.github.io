@@ -70,13 +70,14 @@
 
     <script>
 
-        async function trackATSConversion(pdata_KV_pairs) {
+    async function trackATSConversion(pdata) {
 
             var env;
             var envString;
             var envImg;
-            var pdata_KV_pairs;
 
+            pdataParsed = encodeURIComponent(pdata);
+            
         try {
             // Retrieve the envelope from ATS
             env = await ats.retrieveEnvelope();
@@ -87,7 +88,7 @@
             // Create pixel for CST, concatenate the envelope to the pdata field
             envImg = document.createElement("img");
             envImg.src = "https://di.rlcdn.com/711151.gif?" +
-                "pdata=envelope%3D" + envString + pdata_kv_pairs;
+                "pdata=envelope%3D" + envString + "%2C" + pdataParsed;
             document.body.appendChild(envImg);
         }
     }
