@@ -70,25 +70,50 @@
 
     <script>
 
-    async function trackATSConversion(pdata) {
+async function trackATSConversion(pdata) {
 
             var env;
             var envString;
             var envImg;
+            var consentString;
+            var pid;
+            pid = 13299;
 
-            pdataParsed = encodeURIComponent(pdata);
-            
+//Attempt to fetch consent from the CMP
+        try {
+            await __tcfapi('getTCData', 2, (data, success) => {
+                if (success) { //&& utils.getTCFV2Consent(data.tcString)) {
+                consentString = "&ct=4&cv=" + data.tcString
+                }})
+        }   catch (error) {
+                consentString = ""
+            }
+
+//URL encode Pdata field
+        if(pdata == null){
+            pdataParsed = ""
+        } else {
+            pdataParsed = encodeURIComponent(pdata+"%2C");
+        }
+
+//Attempt to fetch Envelope from storage. If this fails, attempt to fetch envelope from Cookie. If this also fails, set envelope value to "noEnvelope"            
         try {
             // Retrieve the envelope from ATS
             env = await ats.retrieveEnvelope();
             envString = JSON.parse(env).envelope;
-        } catch (error) {
-            envString = "noEnvelope";
+            
+        }   catch (error) {
+                try {let response = await fetch("https://api.rlcdn.com/api/identity/envelope?pid=" + pid + consentString);
+                    envString = JSON.parse(response);
+                }   catch (error) {
+                        envString = "noEnvelope";
+                    }
         } finally {
-            // Create pixel for CST, concatenate the envelope to the pdata field
+
+// Create pixel for CST, concatenate the envelope to the pdata field and apply consent parameter if applicable
             envImg = document.createElement("img");
-            envImg.src = "https://di.rlcdn.com/711151.gif?" +
-                "pdata=envelope%3D" + envString + "%2C" + pdataParsed;
+            envImg.src = "https://di.rlcdn.com/712110.gif?" +
+                "pdata=" + pdataParsed + "envelope%3D" + envString + consentString;
             document.body.appendChild(envImg);
         }
     }
