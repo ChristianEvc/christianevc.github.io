@@ -31,7 +31,7 @@
             <p>ATS Enabled: <span id="atsEnabled"></span></p>
             <p>Envelope Available: <span id="atsEnvelopeValue"></span></p>
             <button onclick="checkForEnvelope()">Check for Envelope</button>
-            <button onclick="triggerCST("hello=world,foo=bar")">Trigger CST</button>
+            <button onclick="triggerCST('hello=world,foo=bar')">Trigger CST</button>
         </div>
 
 
@@ -80,8 +80,8 @@ async function triggerCST(pdata) {
     var envString;
     var envImg;
     var consentString;
-    var pid =     // <YOUR PID HERE>;
-    var pixelID = // <YOUR PIXEL ID HERE>;    
+    var pid = 13299;
+    var pixelID = 712110;
        
     consentString = await fetchCMPConsent();
 
