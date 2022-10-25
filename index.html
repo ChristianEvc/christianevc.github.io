@@ -37,6 +37,7 @@
             <p>ATS Enabled: <span id="atsEnabled"></span></p>
             <p>Envelope Available: <span id="atsEnvelopeValue"></span></p>
             <button onclick="checkForEnvelope()">Check for Envelope</button>
+            <button onclick="triggerCST(pdata)">Fire CST</button>
         </div>
 
 
@@ -83,12 +84,10 @@ async function triggerCST(pdata) {
 
     var env;
     var envString;
-    var envImg;
     var consentString;
-    var pid = 13299;
-    var pixelID = 712110;
-       
-    consentString = await fetchCMPConsent();
+    var pid = // <YOUR PID HERE>;
+
+            consentString = await fetchCMPConsent();
 
     /*
         Attempt to fetch Envelope from storage. 
@@ -101,11 +100,7 @@ async function triggerCST(pdata) {
         envString = JSON.parse(env).envelope;
     } catch (error) {
         envString = await doEnvelopeAPIFallback(pid, consentString);
-    } 
-
-    // Create pixel for CST, concatenate the envelope to the pdata field and apply consent parameter if applicable
-    envImg = createCSTPixelForPData(pdata, pixelID, envString, consentString);
-    document.body.appendChild(envImg);
+    }
 }
 
 
@@ -133,8 +128,10 @@ async function doEnvelopeAPIFallback(pid, consentString) {
     var envString;
 
     try {
-        var response = await fetch("https://api.rlcdn.com/api/identity/envelope?pid=" 
-        + pid + consentString, { credentials: 'include'});
+        var response = await fetch("https://api.rlcdn.com/api/identity/envelope?pid=" +
+            pid + consentString, {
+                credentials: 'include'
+            });
         envString = await response.json();
         envString = envString.envelope;
     } catch (error) {
@@ -145,11 +142,12 @@ async function doEnvelopeAPIFallback(pid, consentString) {
 }
 
 
-function createCSTPixelForPData(pdata, pixelID, envString, consentString) {
+function createCSTPixelForPData(pdata, envString, pid) {
 
     var pdataParsed;
+    var tag
 
-  
+
     /*
         pdata should be comma separated pairs of key/value
         Ex: "key1=value1, key2=value2"
@@ -162,10 +160,10 @@ function createCSTPixelForPData(pdata, pixelID, envString, consentString) {
         pdataParsed = encodeURIComponent(pdata + "%2C");
     }
 
-    envImg = document.createElement("img");
-    envImg.src = "https://di.rlcdn.com/" + pixelID + ".gif?" +
-        "pdata=" + pdataParsed + "envelope%3D" + envString + consentString;
-    return envImg;
+    tag = document.createElement("script");
+    tag.src = "https://di.rlcdn.com/api/segment?pid=" + pid + "&it=19&iv=" + envString
+        "pdata=" + pdataParsed;
+    return tag;
 }
         
         
