@@ -26,12 +26,17 @@
             <button type="submit">Submit</button>
         </form>
 
+        <form id="example-form">
+            <label for="pdata">Test p-data</label>
+            <input type="text" id="pdata" required>
+            <button type="submit">Submit</button>
+        </form>
+
         <div>
             <h3>General ATS info</h1>
             <p>ATS Enabled: <span id="atsEnabled"></span></p>
             <p>Envelope Available: <span id="atsEnvelopeValue"></span></p>
             <button onclick="checkForEnvelope()">Check for Envelope</button>
-            <button onclick="triggerCST('hello=world,foo=bar')">Trigger CST</button>
         </div>
 
 
